@@ -1,0 +1,15 @@
+<component name="ArtifactManager">
+  <artifact name="LibraryPage">
+    <output-path>$PROJECT_DIR$/out/artifacts/LibraryPage</output-path>
+    <root id="root">
+      <element id="archive" name="Libraryy.jar">
+        <element id="directory" name="META-INF">
+          <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+        </element>
+        <element id="module-output" name="Libraryy" />
+      </element>
+      <element id="library" level="project" name="mssql-jdbc-12.8.1.jre11" />
+      <element id="library" level="project" name="jcalendar-1.4" />
+    </root>
+  </artifact>
+</component>
