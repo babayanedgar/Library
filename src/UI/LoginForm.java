@@ -14,7 +14,7 @@ import static utilities.GetInfoFromDB.checkPosition;
  */
 public class LoginForm extends JFrame {
 
-    private final JFrame frame = new JFrame("Login Form");
+    private final JFrame frame = new JFrame("Vertex Library - Login");
 
     private final JLabel nameLabel;
     private final JLabel passLabel;

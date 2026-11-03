@@ -36,7 +36,7 @@ import static utilities.GetInfoFromDB.*;
         public CEOPage(String username) {
             frm.setSize(750, 750);
             frm.setDefaultCloseOperation(EXIT_ON_CLOSE);
-            frm.setTitle("CEO Page");
+            frm.setTitle("Vertex Library - CEO");
 
             // Set up the frame layout
             frm.setLayout(new BorderLayout());

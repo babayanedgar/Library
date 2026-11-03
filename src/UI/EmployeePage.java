@@ -34,7 +34,7 @@ public class EmployeePage extends JFrame {
 
         frame.setSize(750, 750);
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        frame.setTitle("Employee Page");
+        frame.setTitle("Vertex Library - Employee");
 
         mainPanel.setLayout(new BorderLayout());
         mainPanel.setBackground(new Color(10, 20, 30));

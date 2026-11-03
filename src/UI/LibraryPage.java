@@ -17,7 +17,7 @@ import java.awt.event.*;
 public class LibraryPage extends JFrame {
     protected final static JFrame frame = new JFrame();
     protected static JPanel panel = new JPanel();
-   protected JLabel welcomeText = new JLabel("Welcome! " +
+   protected JLabel welcomeText = new JLabel("Welcome to Vertex Library! " +
     "Choose one of the options" );
     protected final JButton borrowButton;
     protected final JButton returnButton;
@@ -28,7 +28,7 @@ public class LibraryPage extends JFrame {
 
 
     public LibraryPage() {
-        frame.setTitle("Library Page");
+        frame.setTitle("Vertex Library");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(750, 500);
         frame.setLayout(new BorderLayout());
