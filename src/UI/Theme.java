@@ -89,7 +89,7 @@ public final class Theme {
     }
 
     /**
-     * Sets the Vertex Library symbol as a window's title-bar and taskbar icon.
+     * Sets the Vertex Library badge as a window's title-bar and taskbar icon.
      */
     public static void applyIcon(Window window) {
         Image icon = loadImage("/logo-icon.png");
@@ -111,7 +111,7 @@ public final class Theme {
     }
 
     /**
-     * The symbol-only logo on its white plate, scaled to a square of the given size.
+     * The navy badge (logo without the wordmark), scaled to a square of the given size.
      */
     public static ImageIcon logoIcon(int size) {
         return scaled("/logo-icon.png", size);

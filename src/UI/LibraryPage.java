@@ -81,10 +81,11 @@ public class LibraryPage extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(6, 10, 6, 10); // Add padding
 
-        // Logo and welcome text
+        // Badge and welcome text (the heading already spells out the name, so the badge goes without the wordmark)
         gbc.gridx = 0;
         gbc.gridy = 0;
-        panel.add(new JLabel(Theme.logo(260)), gbc);
+        JLabel badge = new JLabel(Theme.logoIcon(150), SwingConstants.CENTER);
+        panel.add(badge, gbc);
 
         gbc.gridy = 1;
         gbc.insets = new Insets(18, 10, 4, 10);
