@@ -1,19 +1,16 @@
 package UI;
 import javax.swing.*;
 import javax.swing.table.JTableHeader;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.sql.*;
 import utilities.*;
 
 import static utilities.BubbleSort.sortTable;
 import static utilities.GetInfoFromDB.*;
 
 /**
- * CEOPage is the main interface for the CEO. It provides navigation to 
+ * CEOPage is the main interface for the CEO. It provides navigation to
  * manage employees, books, and view statistics via a user-friendly GUI.
  */
 
@@ -23,7 +20,7 @@ import static utilities.GetInfoFromDB.*;
         private final JPanel mainPanel = new JPanel(); // Main panel that holds sidebar and content area
         private final JPanel contentPanel = new JPanel(new CardLayout()); // Content panel with CardLayout
         private JTable employeeTable;
-    private final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        private Sidebar sidebar;
 
     static JLabel allBooksLabel;
     static JLabel allEmployeesLabel;
@@ -34,18 +31,24 @@ import static utilities.GetInfoFromDB.*;
      */
 
         public CEOPage(String username) {
-            frm.setSize(750, 750);
+            frm.setSize(1080, 720);
+            frm.setMinimumSize(new Dimension(900, 600));
+            frm.setLocationRelativeTo(null);
             frm.setDefaultCloseOperation(EXIT_ON_CLOSE);
             frm.setTitle("Vertex Library - CEO");
+            Theme.applyIcon(frm);
 
             // Set up the frame layout
             frm.setLayout(new BorderLayout());
             // Set up the main panel with BorderLayout
             mainPanel.setLayout(new BorderLayout());
-            mainPanel.setBackground(new Color(10, 20, 30));
+            mainPanel.setBackground(Theme.PAPER);
+            contentPanel.setBackground(Theme.PAPER);
 
             // Add sidebar and content panel to the main panel
-            mainPanel.add(createSidebar(new String[]{"Dashboard", "Manage Employees", "Manage Books"}), BorderLayout.WEST);
+            sidebar = new Sidebar("CEO workspace", new String[]{"Dashboard", "Manage Employees", "Manage Books"},
+                    this::showPanel, this::logout);
+            mainPanel.add(sidebar, BorderLayout.WEST);
             mainPanel.add(contentPanel, BorderLayout.CENTER); // Center area with CardLayout
 
             // Initialize content panels
@@ -54,97 +57,24 @@ import static utilities.GetInfoFromDB.*;
             // Add main panel to the frame
             frm.add(mainPanel);
 
-
-            
-
             frm.setVisible(true);
         }
-    /**
-     * Creates the sidebar for navigation between sections.
-     * @param values Array of section names to include as buttons in the sidebar.
-     * @return A JPanel containing the sidebar layout and functionality.
-     */
-        private JPanel createSidebar(String[] values) {
-            JPanel sidebar = new JPanel();
-            sidebar.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-            sidebar.setBackground(new Color(50, 100, 200));
-            sidebar.setPreferredSize(new Dimension(200, getHeight())); // Fixed width for sidebar
 
-            for (String valueText : values) {
-                JPanel buttonPanel = new JPanel(new GridLayout(1, 1));
-                buttonPanel.setPreferredSize(new Dimension(180, 45)); // Set button size
-                buttonPanel.setBackground(new Color(255, 255, 255));
-
-                JLabel label = new JLabel(valueText, SwingConstants.CENTER);
-                label.setFont(new Font("Roboto", Font.BOLD, 14));
-                label.setForeground(new Color(0, 0, 0));
-                buttonPanel.add(label);
-
-                // Add hover and click effect
-                buttonPanel.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(java.awt.event.MouseEvent e) {
-                        showPanel(valueText); // Switch panel on click
-                    }
-
-                    @Override
-                    public void mouseEntered(java.awt.event.MouseEvent e) {
-                        buttonPanel.setBackground(new Color(255, 135, 0)); // Highlight color
-                        label.setForeground(Color.WHITE); // White text on hover
-                    }
-
-                    @Override
-                    public void mouseExited(java.awt.event.MouseEvent e) {
-                        buttonPanel.setBackground(new Color(255, 255, 255)); // Reset background
-                        label.setForeground(Color.BLACK); // Reset text color
-                    }
-                });
-
-
-                sidebar.add(buttonPanel);
-            }
-            sidebar.add(Box.createVerticalGlue()); // Push the Logout button to the bottom
-
-            JButton logoutButton = new JButton("Logout");
-            logoutButton.setBackground(new Color(255, 69, 58)); // Red color for Logout button
-            logoutButton.setForeground(Color.WHITE);
-            logoutButton.setFocusPainted(false);
-            logoutButton.setPreferredSize(new Dimension(180, 45));
-            logoutButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-            logoutButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    int res = JOptionPane.showConfirmDialog(null, "Are you sure to log out?", "Logout", JOptionPane.YES_NO_OPTION);
-                    if (res == JOptionPane.YES_OPTION) {
-                        frm.dispose();
-                        new LoginForm();
-                    }
-                }
-            });
-            sidebar.add(logoutButton);
-
-            return sidebar;
+    private void logout() {
+        int res = JOptionPane.showConfirmDialog(frm, "Are you sure you want to log out?", "Log out", JOptionPane.YES_NO_OPTION);
+        if (res == JOptionPane.YES_OPTION) {
+            frm.dispose();
+            new LoginForm();
         }
+    }
 
   /**
      * Initializes content panels for Dashboard, Manage Employees, and Manage Books.
      */
   private void initContentPanels() {
-          
-            JPanel dashboardPanel = dashboardPanel();
-
-            contentPanel.add(dashboardPanel, "Dashboard");
-
-            // Initialize and add the People panel
-            JPanel peoplePanel = createPeoplePanel();
-            contentPanel.add(peoplePanel, "Manage Employees");
-
-            JPanel libraryPanel = createLibraryPanel();
-            contentPanel.add(libraryPanel, "Manage Books");
-
-          
-
-
+            contentPanel.add(dashboardPanel(), "Dashboard");
+            contentPanel.add(createPeoplePanel(), "Manage Employees");
+            contentPanel.add(createLibraryPanel(), "Manage Books");
         }
     /**
      * Creates the Dashboard panel for the CEO. This panel includes a welcome section,
@@ -152,109 +82,39 @@ import static utilities.GetInfoFromDB.*;
      * @return A JPanel representing the Dashboard.
      */
     private JPanel dashboardPanel() {
-        // Create the main dashboard panel with a BorderLayout
-        JPanel dashboard = new JPanel();
-        dashboard.setLayout(new BorderLayout(10, 10)); // Add spacing between components
-        dashboard.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Add padding around the panel
+        JPanel dashboard = new JPanel(new BorderLayout());
+        dashboard.setBackground(Theme.PAPER);
+        dashboard.add(Theme.pageHeader("Welcome to Vertex Library", "An overview of the collection and the team."), BorderLayout.NORTH);
 
-        // Welcome Section
-        JLabel welcomeLabel = new JLabel("Welcome to Vertex Library", SwingConstants.CENTER); // Welcome message
-        welcomeLabel.setFont(new Font("Roboto", Font.BOLD, 24)); // Set font for welcome message
-        welcomeLabel.setForeground(new Color(34, 112, 147)); // Custom blue-green text color
-        dashboard.add(welcomeLabel, BorderLayout.NORTH); // Add the welcome label to the top (North)
+        JPanel body = new JPanel(new BorderLayout(0, 28));
+        body.setBackground(Theme.PAPER);
+        body.setBorder(BorderFactory.createEmptyBorder(28, 32, 32, 32));
 
-        // Stats Panel
-        JPanel statsPanel = new JPanel(new GridLayout(3, 1, 10, 10)); // Grid layout for displaying statistics
-        statsPanel.setBorder(BorderFactory.createTitledBorder("Library Statistics")); // Add a titled border to stats panel
+        // Statistics cards
+        allBooksLabel = new JLabel(String.valueOf(getTheNumberofAllBooks()));
+        allEmployeesLabel = new JLabel(String.valueOf(getTheNumberofAllEMPs()));
+        borrowedBooksLabel = new JLabel(String.valueOf(getTheNumberofBorrowedBooks()));
 
-        // Labels to display library statistics
-        allBooksLabel = new JLabel("Total Books: " + getTheNumberofAllBooks()); // Display total books
-        allEmployeesLabel = new JLabel("Total Employees: " + getTheNumberofAllEMPs()); // Display total employees
-        borrowedBooksLabel = new JLabel("Total Borrowed Books: " + getTheNumberofBorrowedBooks()); // Display total borrowed books
+        JPanel statsPanel = new JPanel(new GridLayout(1, 3, 20, 0));
+        statsPanel.setBackground(Theme.PAPER);
+        statsPanel.add(Theme.statCard("Total books", allBooksLabel, Theme.NAVY));
+        statsPanel.add(Theme.statCard("Borrowed books", borrowedBooksLabel, Theme.ROYAL));
+        statsPanel.add(Theme.statCard("Employees", allEmployeesLabel, Theme.SKY));
+        body.add(statsPanel, BorderLayout.NORTH);
 
-        // Set font styles for the statistics labels
-        allBooksLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-        allEmployeesLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-        borrowedBooksLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-
-        // Add the statistics labels to the stats panel
-        statsPanel.add(allBooksLabel);
-        statsPanel.add(allEmployeesLabel);
-        statsPanel.add(borrowedBooksLabel);
-
-        // Add the stats panel to the center of the dashboard
-        dashboard.add(statsPanel, BorderLayout.CENTER);
-
-        // Buttons Panel
-        JPanel buttonsPanel = new JPanel(new GridLayout(1, 2, 10, 10)); // Panel with two buttons in a row
-        buttonsPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0)); // Add spacing above the buttons
-
-        // Create "Manage Books" button
-        JButton manageBooksButton = new JButton("Manage Books");
-        manageBooksButton.setBackground(new Color(100, 149, 237)); // Set light blue background color
-        manageBooksButton.setForeground(Color.WHITE); // White text color
-        manageBooksButton.setFocusPainted(false); // Remove focus border
-        manageBooksButton.setFont(new Font("Arial", Font.BOLD, 14)); // Set bold font for button text
-
-        // Create "Manage Employees" button
-        JButton manageEmployeesButton = new JButton("Manage Employees");
-        manageEmployeesButton.setBackground(new Color(60, 179, 113)); // Set light green background color
-        manageEmployeesButton.setForeground(Color.WHITE); // White text color
-        manageEmployeesButton.setFocusPainted(false); // Remove focus border
-        manageEmployeesButton.setFont(new Font("Arial", Font.BOLD, 14)); // Set bold font for button text
-
-        // Add action listeners to handle button clicks
-        manageBooksButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                showPanel("Manage Books");
-            }
-        }); // Switch to Manage Books panel
-
-        manageBooksButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                manageBooksButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                manageBooksButton.setBackground(new Color(100, 149, 237).darker()); // Highlight color
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                manageBooksButton.setCursor(Cursor.getDefaultCursor());
-                manageBooksButton.setBackground(new Color(100, 149, 237)); // Default button color
-            }
-        });
-
-
-        manageEmployeesButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                showPanel("Manage Employees");
-            }
-        }); // Switch to Manage Employees panel
-
-        manageEmployeesButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                manageEmployeesButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                manageEmployeesButton.setBackground(new Color(60, 179, 113).darker()); // Highlight color
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                manageEmployeesButton.setCursor(Cursor.getDefaultCursor());
-                manageEmployeesButton.setBackground(new Color(60, 179, 113)); // Default button color
-            }
-        });
-
-        // Add the buttons to the buttons panel
+        // Quick actions
+        JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        buttonsPanel.setBackground(Theme.PAPER);
+        JButton manageBooksButton = Theme.button("Manage books", Theme.ButtonStyle.PRIMARY);
+        JButton manageEmployeesButton = Theme.button("Manage employees", Theme.ButtonStyle.SECONDARY);
+        manageBooksButton.addActionListener(e -> showPanel("Manage Books"));
+        manageEmployeesButton.addActionListener(e -> showPanel("Manage Employees"));
         buttonsPanel.add(manageBooksButton);
+        buttonsPanel.add(Box.createHorizontalStrut(12));
         buttonsPanel.add(manageEmployeesButton);
+        body.add(buttonsPanel, BorderLayout.CENTER);
 
-        // Add the buttons panel to the bottom of the dashboard
-        dashboard.add(buttonsPanel, BorderLayout.SOUTH);
-
-        // Return the complete dashboard panel
+        dashboard.add(body, BorderLayout.CENTER);
         return dashboard;
     }
 
@@ -265,53 +125,33 @@ import static utilities.GetInfoFromDB.*;
 
         private JPanel createPeoplePanel() {
             JPanel peoplePanel = new JPanel(new BorderLayout());
-            peoplePanel.setBackground(Color.WHITE);
-        
-            // Table Design
+            peoplePanel.setBackground(Theme.PAPER);
+            peoplePanel.add(Theme.pageHeader("Manage employees", "Add, remove and review staff accounts. Click a column header to sort."), BorderLayout.NORTH);
+
             employeeTable = new JTable();
-           styleTable(employeeTable);
-        
-            // Refresh Table Data
+            Theme.styleTable(employeeTable);
             updateTable.refreshTable(employeeTable, "SELECT ID, Name, Lastname, Username, Position FROM employees");
-        
-            JScrollPane scrollPane = new JScrollPane(employeeTable);
-            peoplePanel.add(scrollPane, BorderLayout.CENTER);
-        
-            // Button Panel
-            buttonPanel.setBackground(new Color(245, 245, 245));
-        
-            // Add Employee Button
-            JButton addEmployeeButton = new JButton("Add Employee");
-            styleButton(addEmployeeButton, new Color(50, 150, 250), Color.WHITE);
-            addEmployeeButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    addEmployee();
-                    updateTable.refreshTable(employeeTable, "SELECT ID, Name, Lastname, Username, Position FROM employees");
-                }
+
+            JPanel tableWrap = new JPanel(new BorderLayout());
+            tableWrap.setBackground(Theme.PAPER);
+            tableWrap.setBorder(BorderFactory.createEmptyBorder(24, 32, 24, 32));
+            tableWrap.add(Theme.tableScroll(employeeTable), BorderLayout.CENTER);
+            peoplePanel.add(tableWrap, BorderLayout.CENTER);
+
+            JButton addEmployeeButton = Theme.button("Add employee", Theme.ButtonStyle.PRIMARY);
+            addEmployeeButton.addActionListener(e -> {
+                addEmployee();
+                updateTable.refreshTable(employeeTable, "SELECT ID, Name, Lastname, Username, Position FROM employees");
             });
 
-
-            // Remove Employee Button
-            JButton removeEmployeeButton = new JButton("Remove Employee");
-            styleButton(removeEmployeeButton, new Color(220, 20, 60), Color.WHITE);
-            removeEmployeeButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    RemoveFromDB.removeSelectedEmployee(employeeTable);
-                    updateTable.refreshTable(employeeTable, "SELECT ID, Name, Lastname, Username, Position FROM employees");
-                }
+            JButton removeEmployeeButton = Theme.button("Remove employee", Theme.ButtonStyle.DANGER);
+            removeEmployeeButton.addActionListener(e -> {
+                RemoveFromDB.removeSelectedEmployee(employeeTable);
+                updateTable.refreshTable(employeeTable, "SELECT ID, Name, Lastname, Username, Position FROM employees");
             });
-        
-            // Back Button
-            JButton backBtn = new JButton("Back");
-            styleButton(backBtn, new Color(100, 100, 100), Color.WHITE);
+
+            JButton backBtn = Theme.button("Back", Theme.ButtonStyle.QUIET);
             backBtn.addActionListener(e -> showPanel("Dashboard"));
-        
-            // Add buttons to the panel
-            buttonPanel.add(addEmployeeButton);
-            buttonPanel.add(removeEmployeeButton);
-            buttonPanel.add(backBtn);
 
             JTableHeader header = employeeTable.getTableHeader();
             header.addMouseListener(new MouseAdapter() {
@@ -324,10 +164,8 @@ import static utilities.GetInfoFromDB.*;
 
             // Disable table editing
             employeeTable.setDefaultEditor(Object.class, null);
-        
-            // Add components to the main panel
-            peoplePanel.add(buttonPanel, BorderLayout.SOUTH);
-        
+
+            peoplePanel.add(Theme.actionBar(backBtn, removeEmployeeButton, addEmployeeButton), BorderLayout.SOUTH);
             return peoplePanel;
         }
 
@@ -337,70 +175,38 @@ import static utilities.GetInfoFromDB.*;
  * @return A JPanel containing the book management interface.
  */
 private JPanel createLibraryPanel() {
-    // Main panel with BorderLayout for managing books
     JPanel libraryPanel = new JPanel(new BorderLayout());
-    libraryPanel.setBackground(Color.WHITE); // Set background color to white for a clean look
+    libraryPanel.setBackground(Theme.PAPER);
+    libraryPanel.add(Theme.pageHeader("Manage books", "The full catalogue with live availability. Click a column header to sort."), BorderLayout.NORTH);
 
     // Set up the table to display book data
-    JTable bookTable = new JTable(); // Create a new JTable for books
-    styleTable(bookTable);
-    // Populate the table with book data from the database
+    JTable bookTable = new JTable();
+    Theme.styleTable(bookTable);
     updateTable.refreshTable(bookTable, "SELECT ID, BookName, Author, Publisher, Year, " +
             "CASE WHEN Status = 1 THEN 'Available' ELSE 'Unavailable' END AS Status FROM books");
 
-    // Add the table to a scroll pane for scrolling functionality
-    JScrollPane scrollPane = new JScrollPane(bookTable);
-    libraryPanel.add(scrollPane, BorderLayout.CENTER); // Add the scroll pane to the center of the panel
+    JPanel tableWrap = new JPanel(new BorderLayout());
+    tableWrap.setBackground(Theme.PAPER);
+    tableWrap.setBorder(BorderFactory.createEmptyBorder(24, 32, 24, 32));
+    tableWrap.add(Theme.tableScroll(bookTable), BorderLayout.CENTER);
+    libraryPanel.add(tableWrap, BorderLayout.CENTER);
 
-    // Create a button panel for managing books
-    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10)); // Button layout
-    buttonPanel.setBackground(new Color(245, 245, 245)); // Light gray background for the button panel
-
-    // Add Book Button
-    JButton addBookButton = new JButton("Add Book"); // Button to add a new book
-    styleButton(addBookButton, new Color(50, 150, 250), Color.WHITE); // Apply styles to the button
-    addBookButton.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            new BookAdditionForm(bookTable); // Open the Book Addition form
-            updateTable.refreshTable(bookTable, "SELECT ID, BookName, Author, Publisher, Year, " +
-                    "CASE WHEN Status = 1 THEN 'Available' ELSE 'Unavailable' END AS Status FROM books");
-        }
-    });
-    addBookButton.addMouseMotionListener(new MouseAdapter() {
-        @Override
-        public void mouseMoved(MouseEvent e) {
-            addBookButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
-        }
+    JButton addBookButton = Theme.button("Add book", Theme.ButtonStyle.PRIMARY);
+    addBookButton.addActionListener(e -> {
+        new BookAdditionForm(bookTable); // Open the Book Addition form
+        updateTable.refreshTable(bookTable, "SELECT ID, BookName, Author, Publisher, Year, " +
+                "CASE WHEN Status = 1 THEN 'Available' ELSE 'Unavailable' END AS Status FROM books");
     });
 
-    // Remove Book Button
-    JButton removeBookButton = new JButton("Remove Book"); // Button to remove a selected book
-    styleButton(removeBookButton, new Color(220, 20, 60), Color.WHITE); // Apply styles to the button
-    removeBookButton.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            RemoveFromDB.removeBook(bookTable); // Remove the selected book from the database
-            updateTable.refreshTable(bookTable, "SELECT ID, BookName, Author, Publisher, Year, " +
-                    "CASE WHEN Status = 1 THEN 'Available' ELSE 'Unavailable' END AS Status FROM books");
-        }
+    JButton removeBookButton = Theme.button("Remove book", Theme.ButtonStyle.DANGER);
+    removeBookButton.addActionListener(e -> {
+        RemoveFromDB.removeBook(bookTable); // Remove the selected book from the database
+        updateTable.refreshTable(bookTable, "SELECT ID, BookName, Author, Publisher, Year, " +
+                "CASE WHEN Status = 1 THEN 'Available' ELSE 'Unavailable' END AS Status FROM books");
     });
 
-    // Back Button
-    JButton backBtn = new JButton("Back"); // Button to navigate back to the dashboard
-    styleButton(backBtn, new Color(100, 100, 100), Color.WHITE); // Apply styles to the button
-    backBtn.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            showPanel("Dashboard");
-        }
-    }); // Switch back to the Dashboard panel
-
-    // Add buttons to the button panel
-    buttonPanel.add(addBookButton);
-    buttonPanel.add(removeBookButton);
-    buttonPanel.add(backBtn);
+    JButton backBtn = Theme.button("Back", Theme.ButtonStyle.QUIET);
+    backBtn.addActionListener(e -> showPanel("Dashboard"));
 
     JTableHeader header = bookTable.getTableHeader();
     header.addMouseListener(new MouseAdapter() {
@@ -414,74 +220,20 @@ private JPanel createLibraryPanel() {
     // Disable editing for the table to prevent unintended changes
     bookTable.setDefaultEditor(Object.class, null);
 
-    // Add the button panel to the bottom of the library panel
-    libraryPanel.add(buttonPanel, BorderLayout.SOUTH);
-
-    // Return the complete library panel
+    libraryPanel.add(Theme.actionBar(backBtn, removeBookButton, addBookButton), BorderLayout.SOUTH);
     return libraryPanel;
 }
-
-
-
-
-
-    // Helper method to style buttons
-    private void styleButton(JButton button, Color bgColor, Color textColor) {
-        button.setBackground(bgColor);
-        button.setForeground(textColor);
-        button.setFont(new Font("Roboto", Font.BOLD, 14));
-        button.setFocusPainted(false);
-        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-    
-        // Add hover effect
-        button.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseEntered(java.awt.event.MouseEvent e) {
-                button.setBackground(bgColor.darker());
-            }
-    
-            @Override
-            public void mouseExited(java.awt.event.MouseEvent e) {
-                button.setBackground(bgColor);
-            }
-        });
-    }
-    
 
     private void addEmployee() {
         new RegistrationForm(employeeTable);
     }
 
-    private JTable styleTable(JTable table){
-        table.setFillsViewportHeight(true);
-        table.setRowHeight(30);
-        table.setFont(new Font("Roboto", Font.PLAIN, 14));
-        table.getTableHeader().setFont(new Font("Roboto", Font.BOLD, 16));
-        table.getTableHeader().setBackground(new Color(50, 100, 200));
-        table.getTableHeader().setForeground(Color.WHITE);
-        table.setSelectionBackground(new Color(255, 215, 0));
-        table.setSelectionForeground(Color.BLACK);
-        table.setGridColor(new Color(230, 230, 230));
-
-        return table;
-    }
-
-
-
-
-    
-
-
-  
-   
- 
- 
      // Method to show the specified panel based on the name
      private void showPanel(String panelName) {
          CardLayout cardLayout = (CardLayout) contentPanel.getLayout();
          cardLayout.show(contentPanel, panelName);
+         sidebar.select(panelName);
      }
- 
+
 
 }

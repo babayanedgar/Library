@@ -17,8 +17,7 @@ import java.awt.event.*;
 public class LibraryPage extends JFrame {
     protected final static JFrame frame = new JFrame();
     protected static JPanel panel = new JPanel();
-   protected JLabel welcomeText = new JLabel("Welcome to Vertex Library! " +
-    "Choose one of the options" );
+   protected JLabel welcomeText = new JLabel("Welcome to Vertex Library", SwingConstants.CENTER);
     protected final JButton borrowButton;
     protected final JButton returnButton;
 
@@ -30,27 +29,27 @@ public class LibraryPage extends JFrame {
     public LibraryPage() {
         frame.setTitle("Vertex Library");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(750, 500);
+        frame.setSize(800, 620);
         frame.setLayout(new BorderLayout());
         frame.setLocationRelativeTo(null); // Center the frame on the screen
+        Theme.applyIcon(frame);
         panel.setLayout(new GridBagLayout()); // Use GridBagLayout for flexibility
-        panel.setBackground(new Color(240, 248, 255));
+        panel.setBackground(Theme.WHITE);
 
         // Welcome text
-        welcomeText.setFont(new Font("Roboto", Font.BOLD, 20));
-        welcomeText.setForeground(new Color(33, 37, 41));
+        welcomeText.setFont(Theme.heading(28));
+        welcomeText.setForeground(Theme.NAVY);
+        JLabel subtitle = new JLabel("Choose one of the options below.", SwingConstants.CENTER);
+        subtitle.setFont(Theme.body(15));
+        subtitle.setForeground(Theme.SLATE);
 
         // Create Borrow Panel
         CreateBorrowPanel bPanel = new CreateBorrowPanel();
 
         // Borrow Button
-        borrowButton = new JButton("Borrow Books");
-        borrowButton.setFont(new Font("Roboto", Font.BOLD, 16));
-        borrowButton.setPreferredSize(new Dimension(200, 50));
-        borrowButton.setBackground(new Color(70, 130, 180));
-        borrowButton.setForeground(Color.WHITE);
-        borrowButton.setFocusPainted(false);
-        borrowButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        borrowButton = Theme.button("Borrow books", Theme.ButtonStyle.PRIMARY);
+        borrowButton.setFont(Theme.strong(16));
+        borrowButton.setPreferredSize(new Dimension(280, 52));
         borrowButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 frame.getContentPane().removeAll();
@@ -64,13 +63,9 @@ public class LibraryPage extends JFrame {
         ReturnPanel rPanel = new ReturnPanel();
 
         // Return Button
-        returnButton = new JButton("Return Books");
-        returnButton.setFont(new Font("Roboto", Font.BOLD, 16));
-        returnButton.setPreferredSize(new Dimension(200, 50));
-        returnButton.setBackground(new Color(70, 130, 180));
-        returnButton.setForeground(Color.WHITE);
-        returnButton.setFocusPainted(false);
-        returnButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        returnButton = Theme.button("Return books", Theme.ButtonStyle.SECONDARY);
+        returnButton.setFont(Theme.strong(16));
+        returnButton.setPreferredSize(new Dimension(280, 52));
         returnButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 frame.getContentPane().removeAll();
@@ -84,19 +79,28 @@ public class LibraryPage extends JFrame {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(10, 10, 10, 10); // Add padding
+        gbc.insets = new Insets(6, 10, 6, 10); // Add padding
 
-        // Add welcome text
+        // Logo and welcome text
         gbc.gridx = 0;
         gbc.gridy = 0;
+        panel.add(new JLabel(Theme.logo(260)), gbc);
+
+        gbc.gridy = 1;
+        gbc.insets = new Insets(18, 10, 4, 10);
         panel.add(welcomeText, gbc);
 
+        gbc.gridy = 2;
+        gbc.insets = new Insets(0, 10, 28, 10);
+        panel.add(subtitle, gbc);
+
         // Add borrow button
-        gbc.gridy = 1;
+        gbc.gridy = 3;
+        gbc.insets = new Insets(6, 10, 6, 10);
         panel.add(borrowButton, gbc);
 
         // Add return button
-        gbc.gridy = 2;
+        gbc.gridy = 4;
         panel.add(returnButton, gbc);
 
         // Add panel to frame
@@ -108,7 +112,7 @@ public class LibraryPage extends JFrame {
     }
 
     public static void main(String[] args) {
-
+        Theme.install();
         new LibraryPage();
     }
 }

@@ -19,7 +19,8 @@ public class MainApp {
      * @param args Command-line arguments (not used in this application).
      */
     public static void main(String[] args) {
-        // Launch the login form as the first screen of the application
+        // Apply the Vertex Library theme, then launch the login form as the first screen
+        Theme.install();
         new LoginForm();
     }
 }

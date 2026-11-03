@@ -46,44 +46,40 @@ public class CreateBorrowPanel {
         // Main panel configuration
         JPanel BorrowPanel = new JPanel();
         BorrowPanel.setLayout(new BoxLayout(BorrowPanel, BoxLayout.Y_AXIS)); // Vertical layout
-        BorrowPanel.setBackground(new Color(240, 248, 255)); // Light blue background
+        BorrowPanel.setBackground(Theme.PAPER);
+
+        JPanel header = Theme.pageHeader("Borrow a book", "Look up a book by its ID, then borrow it for a member.");
+        header.setAlignmentX(Component.CENTER_ALIGNMENT);
+        header.setMaximumSize(new Dimension(Integer.MAX_VALUE, header.getPreferredSize().height));
 
         // Panel for holding search and borrow buttons
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10)); // Centered buttons with spacing
-        buttonPanel.setBackground(new Color(240, 248, 255));
-        buttonPanel.setPreferredSize(new Dimension(300, 50));
-        buttonPanel.setMaximumSize(new Dimension(300, 50));
+        buttonPanel.setBackground(Theme.PAPER);
+        buttonPanel.setPreferredSize(new Dimension(360, 64));
+        buttonPanel.setMaximumSize(new Dimension(360, 64));
 
 
 
         // Label and TextField for Book ID
-        bookid = new JLabel("Book ID:");
-        bookid.setFont(new Font("Roboto", Font.BOLD, 16));
-        bookid.setForeground(new Color(33, 37, 41));
+        bookid = Theme.fieldLabel("Book ID");
+        bookid.setFont(Theme.strong(14));
         bookid.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         BookID = new JTextField();
-        BookID.setFont(new Font("Roboto", Font.PLAIN, 16));
-        BookID.setForeground(new Color(33, 37, 41));
-        BookID.setBackground(Color.WHITE);
+        Theme.styleField(BookID);
         BookID.setAlignmentX(Component.CENTER_ALIGNMENT);
-        BookID.setPreferredSize(new Dimension(200, 30));
-        BookID.setMaximumSize(new Dimension(200, 30));
+        BookID.setPreferredSize(new Dimension(240, 40));
+        BookID.setMaximumSize(new Dimension(240, 40));
 
         // Label to display the availability status of the book
-        status = new JLabel("Status:");
-        status.setFont(new Font("Roboto", Font.BOLD, 16));
-        status.setForeground(new Color(33, 37, 41));
+        status = new JLabel("Status: search for a book");
+        status.setFont(Theme.strong(15));
+        status.setForeground(Theme.SLATE);
         status.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Back button configuration
-        backButton = new JButton("Back");
-        backButton.setFont(new Font("Roboto", Font.BOLD, 16));
-        backButton.setForeground(Color.WHITE);
-        backButton.setBackground(new Color(33, 37, 41));
-        backButton.setPreferredSize(new Dimension(150, 45));
-        backButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        backButton = Theme.button("Back", Theme.ButtonStyle.QUIET);
         backButton.addActionListener(e -> {
             // Navigate back to the LibraryPage
             LibraryPage.frame.getContentPane().removeAll();
@@ -93,12 +89,7 @@ public class CreateBorrowPanel {
         });
 
         // Search button configuration
-        searchButton = new JButton("Search");
-        searchButton.setFont(new Font("Roboto", Font.BOLD, 16));
-        searchButton.setForeground(Color.WHITE);
-        searchButton.setBackground(new Color(33, 37, 41));
-        searchButton.setPreferredSize(new Dimension(120, 40));
-        searchButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        searchButton = Theme.button("Search", Theme.ButtonStyle.SECONDARY);
         searchButton.addActionListener(e -> {
             String enteredBookID = BookID.getText().trim();
             if (enteredBookID.isEmpty()) {
@@ -108,16 +99,12 @@ public class CreateBorrowPanel {
 
             // Check if the book is available
             boolean isBookAvailable = checkBookAvailability(enteredBookID);
-            status.setText(isBookAvailable ? "Available" : "Unavailable" );
+            status.setText(isBookAvailable ? "●  Available" : "●  Unavailable" );
+            status.setForeground(isBookAvailable ? Theme.AVAILABLE : Theme.ROYAL);
         });
 
         // Borrow button configuration
-        borrowBookButton = new JButton("Borrow Book");
-        borrowBookButton.setFont(new Font("Roboto", Font.BOLD, 16));
-        borrowBookButton.setForeground(Color.WHITE);
-        borrowBookButton.setBackground(new Color(33, 37, 41));
-        borrowBookButton.setPreferredSize(new Dimension(160, 40));
-        borrowBookButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        borrowBookButton = Theme.button("Borrow book", Theme.ButtonStyle.PRIMARY);
         borrowBookButton.addActionListener(e -> {
             String enteredBookID = BookID.getText().trim();
             if (enteredBookID.isEmpty()) {
@@ -142,18 +129,20 @@ public class CreateBorrowPanel {
         buttonPanel.add(borrowBookButton);
 
         // Add components to the main BorrowPanel
-        BorrowPanel.add(Box.createVerticalStrut(10));
+        BorrowPanel.add(header);
+        BorrowPanel.add(Box.createVerticalStrut(40));
         BorrowPanel.add(bookid);
+        BorrowPanel.add(Box.createVerticalStrut(8));
         BorrowPanel.add(BookID);
-        BorrowPanel.add(Box.createVerticalStrut(20));
+        BorrowPanel.add(Box.createVerticalStrut(12));
         BorrowPanel.add(buttonPanel);
-        BorrowPanel.add(Box.createVerticalStrut(20));
+        BorrowPanel.add(Box.createVerticalStrut(16));
         BorrowPanel.add(status);
-        BorrowPanel.add(Box.createVerticalStrut(20));
+        BorrowPanel.add(Box.createVerticalStrut(28));
 
         JPanel backPanel = new JPanel();
         backPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        backPanel.setBackground(new Color(240, 248, 255));
+        backPanel.setBackground(Theme.PAPER);
         backPanel.add(backButton);
         BorrowPanel.add(backPanel);
 
@@ -168,23 +157,23 @@ public class CreateBorrowPanel {
      * @throws SQLException if an error occurs during database interaction.
      */
     private void confirmBorrow() throws SQLException {
-        confirmFrame.setSize(400, 250); // Slightly larger to accommodate spacing
+        confirmFrame.setTitle("Vertex Library - Confirm Borrow");
+        confirmFrame.setSize(460, 300); // Slightly larger to accommodate spacing
         confirmFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         confirmFrame.setLayout(new GridBagLayout()); // Use GridBagLayout for better control
+        confirmFrame.getContentPane().setBackground(Theme.PAPER);
         confirmFrame.setResizable(false);
+        Theme.applyIcon(confirmFrame);
 
         // Create components
-        JLabel dateLabel = new JLabel("Select Return Date:");
-        dateLabel.setFont(new Font("Arial", Font.BOLD, 14)); // Larger font for label
+        Theme.styleFieldLabel(idLabel);
+        Theme.styleField(idTextField);
+        JLabel dateLabel = Theme.fieldLabel("Return date:");
         JDateChooser returnDateChooser = new JDateChooser();
         returnDateChooser.setDateFormatString("dd-MM-yyyy"); // Set date format
+        returnDateChooser.setFont(Theme.body(14));
 
-        JButton confirmButton = new JButton("Confirm");
-        confirmButton.setFont(new Font("Arial", Font.BOLD, 14)); // Larger font for button
-        confirmButton.setBackground(new Color(70, 130, 180)); // Blue background
-        confirmButton.setForeground(Color.WHITE); // White text
-        confirmButton.setFocusPainted(false); // Remove focus border
-        confirmButton.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Hand cursor on hover
+        JButton confirmButton = Theme.button("Confirm borrow", Theme.ButtonStyle.PRIMARY);
 
         // Add action listener to the confirm button
         confirmButton.addActionListener(e -> {
@@ -199,13 +188,10 @@ public class CreateBorrowPanel {
 
             java.sql.Date returnDate = new java.sql.Date(utilDate.getTime());
 
-            // Load checkmark icon
-            ImageIcon checkmarkIcon = new ImageIcon(getClass().getResource("/checkmark.png"));
-
             try {
                 // Insert into database
                 InsertIntoDB.borrowBookWithDate(LibraryPage.frame, userID, returnDate, bookID, getBookName(bookID), getuserName(userID));
-                JOptionPane.showMessageDialog(confirmFrame, "Book borrowed successfully.", "Success", JOptionPane.INFORMATION_MESSAGE, checkmarkIcon);
+                JOptionPane.showMessageDialog(confirmFrame, "Book borrowed successfully.", "Success", JOptionPane.INFORMATION_MESSAGE, Theme.successIcon());
 
                 confirmFrame.dispose(); // Close the confirmation window
             } catch (Exception ex) {

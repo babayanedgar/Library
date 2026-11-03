@@ -76,9 +76,7 @@ public static void removeBook(JTable table) {
                 if (rowsAffected > 0) {
                     // Remove the row from the table for immediate UI feedback
                     ((DefaultTableModel) table.getModel()).removeRow(selectedRow);
-                    ImageIcon checkmarkIcon = new ImageIcon("/checkmark.png");
-
-                    JOptionPane.showMessageDialog(null, "Book removed successfully.","Success",JOptionPane.INFORMATION_MESSAGE, checkmarkIcon);
+                    JOptionPane.showMessageDialog(null, "Book removed successfully.","Success",JOptionPane.INFORMATION_MESSAGE, UI.Theme.successIcon());
                 } else {
                     JOptionPane.showMessageDialog(null, "No book found with ID: " + bookID);
                 }

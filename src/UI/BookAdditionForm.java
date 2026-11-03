@@ -32,40 +32,35 @@ public class BookAdditionForm extends JFrame {
         this.bookTable = bookTable;
 
         // Frame setup
-        setTitle("Add New Book");
-        setSize(350, 300);
+        setTitle("Vertex Library - Add Book");
+        setSize(460, 440);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null); // Center the form
+        Theme.applyIcon(this);
+        setLayout(new BorderLayout());
+        add(Theme.pageHeader("Add a book", "New books are added as Available."), BorderLayout.NORTH);
 
         // Main Panel
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panel.setBackground(Theme.PAPER);
+        panel.setBorder(BorderFactory.createEmptyBorder(16, 28, 8, 28));
 
         // Create and add components
-        panel.add(createInputField("Title:", titleField = new JTextField(20)));
-        panel.add(createInputField("Author:", authorField = new JTextField(20)));
-        panel.add(createInputField("Publisher:", publisherField = new JTextField(20)));
-        panel.add(createInputField("Year:", yearField = new JTextField(20)));
+        panel.add(createInputField("Title", titleField = new JTextField(20)));
+        panel.add(createInputField("Author", authorField = new JTextField(20)));
+        panel.add(createInputField("Publisher", publisherField = new JTextField(20)));
+        panel.add(createInputField("Year", yearField = new JTextField(20)));
 
-        // Button Panel
-        JPanel buttonPanel = new JPanel();
-        addButton = new JButton("Add Book");
-        cancelButton = new JButton("Cancel");
-
-        addButton.setBackground(new Color(34, 177, 76)); // Green button
-        addButton.setForeground(Color.WHITE);
-        cancelButton.setBackground(new Color(237, 28, 36)); // Red button
-        cancelButton.setForeground(Color.WHITE);
+        addButton = Theme.button("Add book", Theme.ButtonStyle.PRIMARY);
+        cancelButton = Theme.button("Cancel", Theme.ButtonStyle.QUIET);
 
         addButton.addActionListener(e -> addBook());
         cancelButton.addActionListener(e -> dispose());
 
-        buttonPanel.add(addButton);
-        buttonPanel.add(cancelButton);
-        panel.add(buttonPanel);
-
-        add(panel);
+        add(panel, BorderLayout.CENTER);
+        add(Theme.actionBar(cancelButton, addButton), BorderLayout.SOUTH);
+        getRootPane().setDefaultButton(addButton);
         setVisible(true);
     }
 
@@ -77,11 +72,15 @@ public class BookAdditionForm extends JFrame {
      * @return A JPanel containing the label and text field.
      */
     private JPanel createInputField(String label, JTextField field) {
-        JPanel inputPanel = new JPanel(new BorderLayout(5, 5));
-        JLabel jLabel = new JLabel(label);
+        JPanel inputPanel = new JPanel(new BorderLayout(12, 0));
+        inputPanel.setBackground(Theme.PAPER);
+        JLabel jLabel = Theme.fieldLabel(label);
+        jLabel.setPreferredSize(new Dimension(80, 0));
+        Theme.styleField(field);
         inputPanel.add(jLabel, BorderLayout.WEST);
         inputPanel.add(field, BorderLayout.CENTER);
-        inputPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+        inputPanel.setBorder(BorderFactory.createEmptyBorder(6, 0, 6, 0));
+        inputPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, inputPanel.getPreferredSize().height));
         return inputPanel;
     }
 
@@ -118,11 +117,10 @@ public class BookAdditionForm extends JFrame {
         // Refresh book table
         updateTable.refreshTable(bookTable, "SELECT ID, BookName, Author, Publisher, Year, " +
                 "CASE WHEN Status = 1 THEN 'Available' ELSE 'Unavailable' END AS Status FROM books");
-        CEOPage.allBooksLabel.setText("Total Books: " + getTheNumberofAllBooks());
-        ImageIcon checkmarkIcon = new ImageIcon(getClass().getResource("/checkmark.png"));
+        CEOPage.allBooksLabel.setText(String.valueOf(getTheNumberofAllBooks()));
 
         // Show success message
-        JOptionPane.showMessageDialog(this, "Book added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE, checkmarkIcon);
+        JOptionPane.showMessageDialog(this, "Book added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE, Theme.successIcon());
         dispose();
     }
 }

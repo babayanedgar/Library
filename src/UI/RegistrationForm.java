@@ -25,50 +25,27 @@ public class RegistrationForm {
     public RegistrationForm(JTable tableModel) {
         this.employeeTable = tableModel; // Initialize the table model reference
 
-        frame.setTitle("CREATE ACCOUNT");
+        frame.setTitle("Vertex Library - Create Account");
+        // Closing this form should only close the form, not the whole app
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        frame.setSize(400, 500); // Adjusted size to fit all components
-        frame.setLayout(null);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500, 500);
+        frame.setSize(560, 700);
         frame.setLocationRelativeTo(null);
         frame.setLayout(new BorderLayout());
+        Theme.applyIcon(frame);
+        frame.add(Theme.pageHeader("Create account", "Add a new staff member to Vertex Library."), BorderLayout.NORTH);
 
-
-        // Custom Panel with Background Image
-        JPanel mainPanel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-
-                // Define the gradient colors
-                Color lightBlue = new Color(135, 206, 235); // #87CEEB
-                Color darkBlue = new Color(70, 130, 180);   // #4682B4
-
-                // Create a gradient paint
-                GradientPaint gradient = new GradientPaint(
-                        0, 0, lightBlue, // Start point and color
-                        getWidth(), getHeight(), darkBlue // End point and color
-                );
-
-                // Cast Graphics to Graphics2D
-                Graphics2D g2d = (Graphics2D) g;
-
-                // Set the paint and fill the background
-                g2d.setPaint(gradient);
-                g2d.fillRect(0, 0, getWidth(), getHeight());
-            }
-        };
-        mainPanel.setLayout(new GridBagLayout());
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        mainPanel.setBackground(Theme.PAPER);
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(16, 24, 16, 24));
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.insets = new Insets(7, 8, 7, 8);
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.WEST;
 
         // First Name Label
         nameLabel = new JLabel("First Name:");
-        nameLabel.setForeground(Color.BLACK);
-        nameLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        Theme.styleFieldLabel(nameLabel);
         gbc.gridx = 0;
         gbc.gridy = 0;
         mainPanel.add(nameLabel, gbc);
@@ -82,8 +59,7 @@ public class RegistrationForm {
 
         // Last Name Label
         lastNameLabel = new JLabel("Last Name:");
-        lastNameLabel.setForeground(Color.BLACK);
-        lastNameLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        Theme.styleFieldLabel(lastNameLabel);
         gbc.gridx = 0;
         gbc.gridy = 1;
         mainPanel.add(lastNameLabel, gbc);
@@ -97,8 +73,7 @@ public class RegistrationForm {
 
         // Username Label
         usernameLabel = new JLabel("Username:");
-        usernameLabel.setForeground(Color.BLACK);
-        usernameLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        Theme.styleFieldLabel(usernameLabel);
         gbc.gridx = 0;
         gbc.gridy = 2;
         mainPanel.add(usernameLabel, gbc);
@@ -112,8 +87,7 @@ public class RegistrationForm {
 
         // Email Label
         emailLabel = new JLabel("Email:");
-        emailLabel.setForeground(Color.BLACK);
-        emailLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        Theme.styleFieldLabel(emailLabel);
         gbc.gridx = 0;
         gbc.gridy = 3;
         mainPanel.add(emailLabel, gbc);
@@ -127,8 +101,7 @@ public class RegistrationForm {
 
         // Password Label
         passwordLabel = new JLabel("Password:");
-        passwordLabel.setForeground(Color.BLACK);
-        passwordLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        Theme.styleFieldLabel(passwordLabel);
         gbc.gridx = 0;
         gbc.gridy = 4;
         mainPanel.add(passwordLabel, gbc);
@@ -142,8 +115,7 @@ public class RegistrationForm {
 
         // Confirm Password Label
         confirmPasswordLabel = new JLabel("Confirm Password:");
-        confirmPasswordLabel.setForeground(Color.BLACK);
-        confirmPasswordLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        Theme.styleFieldLabel(confirmPasswordLabel);
         gbc.gridx = 0;
         gbc.gridy = 5;
         mainPanel.add(confirmPasswordLabel, gbc);
@@ -156,35 +128,34 @@ public class RegistrationForm {
         mainPanel.add(confirmPasswordField, gbc);
 
         // Show Password Checkbox
-        showPasswordCheckbox = new JCheckBox("Show Password");
-        showPasswordCheckbox.setForeground(Color.BLACK);
-        showPasswordCheckbox.setOpaque(false);
+        showPasswordCheckbox = new JCheckBox("Show password");
+        Theme.styleCheckBox(showPasswordCheckbox);
         gbc.gridx = 1;
         gbc.gridy = 6;
         mainPanel.add(showPasswordCheckbox, gbc);
 
         // Gender Label
         genderLabel = new JLabel("Gender:");
-        genderLabel.setForeground(Color.BLACK);
-        genderLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        Theme.styleFieldLabel(genderLabel);
         gbc.gridx = 0;
         gbc.gridy = 7;
         mainPanel.add(genderLabel, gbc);
 
         // Gender Checkboxes
         maleCheckbox = new JCheckBox("Male");
-        maleCheckbox.setForeground(Color.BLACK);
-        maleCheckbox.setOpaque(false);
-        gbc.gridx = 1;
-        gbc.gridy = 7;
-        mainPanel.add(maleCheckbox, gbc);
+        Theme.styleCheckBox(maleCheckbox);
 
         femaleCheckbox = new JCheckBox("Female");
-        femaleCheckbox.setForeground(Color.BLACK);
-        femaleCheckbox.setOpaque(false);
-        gbc.gridx = 2;
+        Theme.styleCheckBox(femaleCheckbox);
+
+        JPanel genderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        genderPanel.setOpaque(false);
+        genderPanel.add(maleCheckbox);
+        genderPanel.add(Box.createHorizontalStrut(16));
+        genderPanel.add(femaleCheckbox);
+        gbc.gridx = 1;
         gbc.gridy = 7;
-        mainPanel.add(femaleCheckbox, gbc);
+        mainPanel.add(genderPanel, gbc);
 
         genderGroup = new ButtonGroup();
         genderGroup.add(maleCheckbox);
@@ -192,24 +163,24 @@ public class RegistrationForm {
 
         // Position Label
         positionLabel = new JLabel("Position:");
-        positionLabel.setForeground(Color.BLACK);
-        positionLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        Theme.styleFieldLabel(positionLabel);
         gbc.gridx = 0;
         gbc.gridy = 8;
         mainPanel.add(positionLabel, gbc);
 
         // Position ComboBox
         cmbPosition = new JComboBox<>(new String[]{"CEO", "Employee"});
-        cmbPosition.setFont(new Font("Arial", Font.PLAIN, 14));
+        cmbPosition.setFont(Theme.body(14));
+        cmbPosition.setBackground(Theme.WHITE);
         gbc.gridx = 1;
         gbc.gridy = 8;
         mainPanel.add(cmbPosition, gbc);
 
         // Register Button
-        RegisterButton = new JButton("Sign Up");
-        styleButton(RegisterButton);
+        RegisterButton = Theme.button("Create account", Theme.ButtonStyle.PRIMARY);
         gbc.gridx = 1;
         gbc.gridy = 9;
+        gbc.insets = new Insets(20, 8, 7, 8);
         mainPanel.add(RegisterButton, gbc);
 
 
@@ -240,29 +211,7 @@ public class RegistrationForm {
 
 
     private void styleTextField(JTextField textField) {
-        textField.setOpaque(false);
-        textField.setFont(new Font("Arial", Font.PLAIN, 14));
-        textField.setForeground(Color.BLACK);
-        textField.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.WHITE));
-    }
-
-    private void styleButton(JButton button) {
-        button.setBackground(new Color(30, 144, 255));
-        button.setForeground(Color.BLACK);
-        button.setFocusPainted(false);
-        button.setFont(new Font("Arial", Font.BOLD, 14));
-        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-
-        // Hover Effect
-        button.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                button.setBackground(new Color(0, 102, 204));
-            }
-
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                button.setBackground(new Color(30, 144, 255));
-            }
-        });
+        Theme.styleField(textField);
     }
 
     private void handleRegistration(ActionEvent e){
@@ -329,10 +278,8 @@ public class RegistrationForm {
         InsertIntoDB.InsertIntoDB(emp);
 
         updateTable.refreshTable(employeeTable, "SELECT Name, Lastname, Username, Position FROM employees");
-        ImageIcon checkmarkIcon = new ImageIcon(getClass().getResource("/checkmark.png"));
-
         int result = JOptionPane.showConfirmDialog(null, "Registration successful!", "Success", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
-                checkmarkIcon);
+                Theme.successIcon());
         if (result == JOptionPane.OK_OPTION || result == JOptionPane.CLOSED_OPTION) {
             frame.dispose();
         }

@@ -26,96 +26,80 @@ public class LoginForm extends JFrame {
     public LoginForm() {
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500, 400);
+        frame.setSize(900, 560);
+        frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setLayout(new BorderLayout());
-       // ImageIcon backgroundImage = new ImageIcon("backgroundLogin.jpg");
+        Theme.applyIcon(frame);
 
-        java.net.URL logoOneUrl = getClass().getResource("/backgroundLogin.jpg");
-        ImageIcon logoOne = new ImageIcon(logoOneUrl );
-        // Custom Panel with Gradient Background
-        JPanel mainPanel = new JPanel() {
-           @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                g.drawImage(logoOne.getImage(), 0, 0, getWidth(), getHeight(), this);
-            }
-        };
-        mainPanel.setLayout(new GridBagLayout());
+        // Two columns: the logo on white, the sign-in form on paper
+        JPanel mainPanel = new JPanel(new GridLayout(1, 2));
 
-        // Constraints for positioning
+        JPanel brandPanel = new JPanel(new GridBagLayout());
+        brandPanel.setBackground(Theme.WHITE);
+        brandPanel.add(new JLabel(Theme.logo(340)));
+        mainPanel.add(brandPanel);
+
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        formPanel.setBackground(Theme.PAPER);
+        formPanel.setBorder(BorderFactory.createEmptyBorder(0, 56, 0, 56));
+        mainPanel.add(formPanel);
+
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.gridx = 0;
+        gbc.weightx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Username Label
-        nameLabel = new JLabel("Username:");
-        nameLabel.setForeground(Color.BLACK);
-        nameLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        gbc.gridx = 0;
+        JLabel title = new JLabel("Welcome back");
+        title.setFont(Theme.heading(30));
+        title.setForeground(Theme.NAVY);
         gbc.gridy = 0;
-        mainPanel.add(nameLabel, gbc);
+        formPanel.add(title, gbc);
 
-        // Username Field
+        JLabel subtitle = new JLabel("Sign in to the Vertex Library staff portal.");
+        subtitle.setFont(Theme.body(14));
+        subtitle.setForeground(Theme.SLATE);
+        gbc.gridy = 1;
+        gbc.insets = new Insets(6, 0, 28, 0);
+        formPanel.add(subtitle, gbc);
+
+        // Username
+        nameLabel = Theme.fieldLabel("Username");
+        gbc.gridy = 2;
+        gbc.insets = new Insets(0, 0, 6, 0);
+        formPanel.add(nameLabel, gbc);
+
         textField = new JTextField(15);
-        textField.setOpaque(false);
-        textField.setFont(new Font("Arial", Font.PLAIN, 14));
-        textField.setForeground(Color.BLACK);
-        textField.setBackground(new Color(0, 0, 0, 0));
-        textField.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.WHITE));
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        mainPanel.add(textField, gbc);
+        Theme.styleField(textField);
+        gbc.gridy = 3;
+        gbc.insets = new Insets(0, 0, 18, 0);
+        formPanel.add(textField, gbc);
 
-        // Password Label
-        passLabel = new JLabel("Password:");
-        passLabel.setForeground(Color.BLACK);
-        passLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        mainPanel.add(passLabel, gbc);
+        // Password
+        passLabel = Theme.fieldLabel("Password");
+        gbc.gridy = 4;
+        gbc.insets = new Insets(0, 0, 6, 0);
+        formPanel.add(passLabel, gbc);
 
-        // Password Field
         passwordField = new JPasswordField(15);
-        passwordField.setOpaque(false);
-        passwordField.setFont(new Font("Arial", Font.PLAIN, 14));
-        passwordField.setForeground(Color.BLACK);
-        passwordField.setBackground(new Color(0, 0, 0, 0));
-        passwordField.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.WHITE));
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        mainPanel.add(passwordField, gbc);
+        Theme.styleField(passwordField);
+        gbc.gridy = 5;
+        gbc.insets = new Insets(0, 0, 8, 0);
+        formPanel.add(passwordField, gbc);
 
         // Show Password Checkbox
-        showPasswordCheckbox = new JCheckBox("Show Password");
-        showPasswordCheckbox.setForeground(Color.BLACK);
-        showPasswordCheckbox.setOpaque(false);
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        mainPanel.add(showPasswordCheckbox, gbc);
+        showPasswordCheckbox = new JCheckBox("Show password");
+        Theme.styleCheckBox(showPasswordCheckbox);
+        gbc.gridy = 6;
+        gbc.insets = new Insets(0, 0, 24, 0);
+        formPanel.add(showPasswordCheckbox, gbc);
 
         // Login Button
-        loginButton = new JButton("Login");
-        loginButton.setBackground(new Color(30, 144, 255));
-        loginButton.setForeground(Color.BLACK);
-        loginButton.setFocusPainted(false);
-        loginButton.setFont(new Font("Arial", Font.BOLD, 14));
-        loginButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-
-        // Hover Effect
-        loginButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                loginButton.setBackground(new Color(0, 102, 204));
-            }
-
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                loginButton.setBackground(new Color(30, 144, 255));
-            }
-        });
-
-        gbc.gridx = 1;
-        gbc.gridy = 3;
-        mainPanel.add(loginButton, gbc);
+        loginButton = Theme.button("Log in", Theme.ButtonStyle.PRIMARY);
+        gbc.gridy = 7;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        formPanel.add(loginButton, gbc);
+        frame.getRootPane().setDefaultButton(loginButton); // Enter key logs in
 
         // Add action listeners
         loginButton.addActionListener(e -> {

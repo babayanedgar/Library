@@ -13,62 +13,37 @@ public class ReturnPanel {
      JPanel ReturnPanel() {
         JPanel ReturnBooksPanel = new JPanel();
         ReturnBooksPanel.setLayout(new BorderLayout());
-        ReturnBooksPanel.setBackground(new Color(240, 248, 255));
+        ReturnBooksPanel.setBackground(Theme.PAPER);
+        ReturnBooksPanel.add(Theme.pageHeader("Return a book", "Find a member's loans by user ID, select a book and return it."), BorderLayout.NORTH);
 
         // Left Panel for User ID and Buttons
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
-        leftPanel.setBackground(new Color(240, 248, 255));
+        leftPanel.setBackground(Theme.PAPER);
+        leftPanel.setBorder(BorderFactory.createEmptyBorder(0, 32, 0, 16));
+        Dimension buttonSize = new Dimension(240, 44);
 
-        JLabel UserId = new JLabel("Enter User ID:");
-        UserId.setFont(new Font("Roboto", Font.BOLD, 16));
-        UserId.setForeground(new Color(33, 37, 41));
+        JLabel UserId = Theme.fieldLabel("User ID");
         UserId.setAlignmentX(Component.LEFT_ALIGNMENT);
-        UserId.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        UserId.setBorder(BorderFactory.createEmptyBorder(10, 0, 8, 0));
 
         JTextField userIDField = new JTextField();
-        userIDField.setFont(new Font("Roboto", Font.PLAIN, 16));
-        userIDField.setForeground(new Color(33, 37, 41));
-        userIDField.setBackground(new Color(255, 255, 255));
+        Theme.styleField(userIDField);
         userIDField.setAlignmentX(Component.LEFT_ALIGNMENT);
-        userIDField.setPreferredSize(new Dimension(200, 30));
-        userIDField.setMaximumSize(new Dimension(200, 30));
-        userIDField.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
-        userIDField.setCaretColor(new Color(0, 0, 0));
+        userIDField.setPreferredSize(new Dimension(240, 40));
+        userIDField.setMaximumSize(new Dimension(240, 40));
 
-        JButton checkBorrowedBooks = new JButton("Check Borrowed Books");
-        checkBorrowedBooks.setFont(new Font("Roboto", Font.BOLD, 16));
-        checkBorrowedBooks.setForeground(Color.WHITE);
-        checkBorrowedBooks.setBackground(new Color(33, 37, 41));
-        checkBorrowedBooks.setPreferredSize(new Dimension(150, 45));
+        JButton checkBorrowedBooks = Theme.button("Check borrowed books", Theme.ButtonStyle.SECONDARY);
         checkBorrowedBooks.setAlignmentX(Component.LEFT_ALIGNMENT);
-        checkBorrowedBooks.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        checkBorrowedBooks.setFocusPainted(false);
-        checkBorrowedBooks.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        
+        checkBorrowedBooks.setMaximumSize(buttonSize);
 
-
-
-        JButton ReturnButton = new JButton("Return selected book(s)");
-        ReturnButton.setFont(new Font("Roboto", Font.BOLD, 16));
-        ReturnButton.setForeground(Color.WHITE);
-        ReturnButton.setBackground(new Color(33, 37, 41));
-        ReturnButton.setPreferredSize(new Dimension(150, 45));
+        JButton ReturnButton = Theme.button("Return selected book", Theme.ButtonStyle.PRIMARY);
         ReturnButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-        ReturnButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        ReturnButton.setFocusPainted(false);
-        ReturnButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-    
+        ReturnButton.setMaximumSize(buttonSize);
 
-        JButton backButton = new JButton("Back");
-        backButton.setFont(new Font("Roboto", Font.BOLD, 16));
-        backButton.setForeground(Color.WHITE);
-        backButton.setBackground(new Color(33, 37, 41));
-        backButton.setPreferredSize(new Dimension(150, 45));
-        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        backButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        backButton.setFocusPainted(false);
-        backButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        JButton backButton = Theme.button("Back", Theme.ButtonStyle.QUIET);
+        backButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        backButton.setMaximumSize(buttonSize);
         backButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 LibraryPage.frame.getContentPane().removeAll();
@@ -81,20 +56,21 @@ public class ReturnPanel {
         leftPanel.add(Box.createVerticalStrut(30));
         leftPanel.add(UserId);
         leftPanel.add(userIDField);
-        leftPanel.add(Box.createVerticalStrut(20));
+        leftPanel.add(Box.createVerticalStrut(16));
         leftPanel.add(checkBorrowedBooks);
-        leftPanel.add(Box.createVerticalStrut(20));
+        leftPanel.add(Box.createVerticalStrut(12));
         leftPanel.add(ReturnButton);
-        leftPanel.add(Box.createVerticalStrut(20));
+        leftPanel.add(Box.createVerticalStrut(12));
         leftPanel.add(backButton);
         leftPanel.add(Box.createVerticalStrut(30));
          JPanel rightPanel = new JPanel();
-        rightPanel.setLayout(new BorderLayout());
-        rightPanel.setBackground(new Color(240, 248, 255));
+        rightPanel.setLayout(new BorderLayout(0, 10));
+        rightPanel.setBackground(Theme.PAPER);
+        rightPanel.setBorder(BorderFactory.createEmptyBorder(40, 16, 32, 32));
 
-        JLabel tableLabel = new JLabel("Borrowed Books:");
-        tableLabel.setFont(new Font("Roboto", Font.BOLD, 16));
-        tableLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        JLabel tableLabel = new JLabel("Borrowed books");
+        tableLabel.setFont(Theme.strong(14));
+        tableLabel.setForeground(Theme.NAVY);
         rightPanel.add(tableLabel, BorderLayout.NORTH);
         
 
@@ -104,11 +80,11 @@ public class ReturnPanel {
     
 // Create the JTable
     JTable table = new JTable(tableModel);
-    table.setFillsViewportHeight(true);
+    Theme.styleTable(table);
     table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 // Add the table to a scroll pane
-    JScrollPane tableScrollPane = new JScrollPane(table);
+    JScrollPane tableScrollPane = Theme.tableScroll(table);
     tableScrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
 
 checkBorrowedBooks.addActionListener(new ActionListener() {
@@ -157,9 +133,7 @@ ReturnButton.addActionListener(new ActionListener() {
                 DefaultTableModel model = (DefaultTableModel) table.getModel();
                 model.removeRow(selectedRow);
 
-                ImageIcon checkmarkIcon = new ImageIcon(getClass().getResource("/checkmark.png"));
-
-                JOptionPane.showMessageDialog(LibraryPage.frame, "Book returned successfully!", "Success", JOptionPane.INFORMATION_MESSAGE,checkmarkIcon);
+                JOptionPane.showMessageDialog(LibraryPage.frame, "Book returned successfully!", "Success", JOptionPane.INFORMATION_MESSAGE, Theme.successIcon());
 
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(LibraryPage.frame, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
