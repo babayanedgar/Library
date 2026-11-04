@@ -11,7 +11,7 @@ import utilities.*;
 import static utilities.BubbleSort.sortTable;
 import static utilities.GetInfoFromDB.*;
 
-public class EmployeePage extends JFrame {
+public class UserPage extends JFrame {
 
     private final JFrame frame = new JFrame();
     private final JPanel mainPanel = new JPanel(); // Main panel that holds sidebar and content area
@@ -23,7 +23,7 @@ public class EmployeePage extends JFrame {
     private final String lastname;
     private final String username;
 
-    EmployeePage(String name, String lastname, String username) {
+    UserPage(String name, String lastname, String username) {
 
         this.name = name;
         this.lastname = lastname;
@@ -33,14 +33,14 @@ public class EmployeePage extends JFrame {
         frame.setMinimumSize(new Dimension(900, 600));
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        frame.setTitle("Vertex Library - Employee");
+        frame.setTitle("Vertex Library - User");
         Theme.applyIcon(frame);
 
         mainPanel.setLayout(new BorderLayout());
         mainPanel.setBackground(Theme.PAPER);
         contentPanel.setBackground(Theme.PAPER);
 
-        sidebar = new Sidebar("Staff workspace", new String[]{"Welcome", "Books", "Borrowed Books", "Due Books"},
+        sidebar = new Sidebar("User workspace", new String[]{"Welcome", "Books", "Borrowed Books", "Due Books"},
                 this::showPanel, this::logout);
         mainPanel.add(sidebar, BorderLayout.WEST);
         mainPanel.add(contentPanel, BorderLayout.CENTER); // Center area with CardLayout

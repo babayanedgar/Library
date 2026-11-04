@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * Navy navigation sidebar shared by the CEO and employee pages:
+ * Navy navigation sidebar shared by the CEO and user pages:
  * logo and workspace name at the top, navigation items, and a logout button at the bottom.
  */
 public class Sidebar extends JPanel {

@@ -2,7 +2,7 @@ package Entities;
 
 /**
  * Represents a person entity in the library system.
- * This is an abstract class that serves as the base class for other entities like `Employee`.
+ * This is an abstract class that serves as the base class for other entities like `User`.
  * It includes properties like name, last name, email, and gender.
  */
 abstract class Person {

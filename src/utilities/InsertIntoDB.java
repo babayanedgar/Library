@@ -11,25 +11,25 @@ public class InsertIntoDB {
     public InsertIntoDB() {
 
     }
-        public static void InsertIntoDB(Employee emp){
-            if (isUsernameTaken(emp.getUsername())) {
+        public static void InsertIntoDB(User user){
+            if (isUsernameTaken(user.getUsername())) {
                 JOptionPane.showMessageDialog(null, "Username already exists! Please choose another one.");
                 return;
             }
 
             String query = "use Library " +
-                    "INSERT INTO employees (name, lastname, username, gender,email, password, position) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                    "INSERT INTO users (name, lastname, username, gender,email, password, position) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
             try (Connection conn = dbConnection.getConnection();
                  PreparedStatement pstmt = conn.prepareStatement(query)) {
 
-                pstmt.setString(1, emp.getName());
-                pstmt.setString(2, emp.getLastName());
-                pstmt.setString(3, emp.getUsername());
-                pstmt.setString(4, emp.getGender());
-                pstmt.setString(5, emp.getEmail());
-                pstmt.setString(6, emp.getPassword());
-                pstmt.setString(7, emp.getPosition());
+                pstmt.setString(1, user.getName());
+                pstmt.setString(2, user.getLastName());
+                pstmt.setString(3, user.getUsername());
+                pstmt.setString(4, user.getGender());
+                pstmt.setString(5, user.getEmail());
+                pstmt.setString(6, user.getPassword());
+                pstmt.setString(7, user.getPosition());
                 pstmt.executeUpdate();
 
 

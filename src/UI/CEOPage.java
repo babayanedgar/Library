@@ -11,7 +11,7 @@ import static utilities.GetInfoFromDB.*;
 
 /**
  * CEOPage is the main interface for the CEO. It provides navigation to
- * manage employees, books, and view statistics via a user-friendly GUI.
+ * manage users, books, and view statistics via a user-friendly GUI.
  */
 
     public class CEOPage extends JFrame {
@@ -19,11 +19,11 @@ import static utilities.GetInfoFromDB.*;
         private final JFrame frm = new JFrame();
         private final JPanel mainPanel = new JPanel(); // Main panel that holds sidebar and content area
         private final JPanel contentPanel = new JPanel(new CardLayout()); // Content panel with CardLayout
-        private JTable employeeTable;
+        private JTable userTable;
         private Sidebar sidebar;
 
     static JLabel allBooksLabel;
-    static JLabel allEmployeesLabel;
+    static JLabel allUsersLabel;
     static JLabel borrowedBooksLabel;
 /**
      * Constructor to initialize and set up the CEOPage interface.
@@ -46,7 +46,7 @@ import static utilities.GetInfoFromDB.*;
             contentPanel.setBackground(Theme.PAPER);
 
             // Add sidebar and content panel to the main panel
-            sidebar = new Sidebar("CEO workspace", new String[]{"Dashboard", "Manage Employees", "Manage Books"},
+            sidebar = new Sidebar("CEO workspace", new String[]{"Dashboard", "Manage Users", "Manage Books"},
                     this::showPanel, this::logout);
             mainPanel.add(sidebar, BorderLayout.WEST);
             mainPanel.add(contentPanel, BorderLayout.CENTER); // Center area with CardLayout
@@ -69,22 +69,22 @@ import static utilities.GetInfoFromDB.*;
     }
 
   /**
-     * Initializes content panels for Dashboard, Manage Employees, and Manage Books.
+     * Initializes content panels for Dashboard, Manage Users, and Manage Books.
      */
   private void initContentPanels() {
             contentPanel.add(dashboardPanel(), "Dashboard");
-            contentPanel.add(createPeoplePanel(), "Manage Employees");
+            contentPanel.add(createPeoplePanel(), "Manage Users");
             contentPanel.add(createLibraryPanel(), "Manage Books");
         }
     /**
      * Creates the Dashboard panel for the CEO. This panel includes a welcome section,
-     * library statistics, and navigation buttons to other sections (Manage Books and Manage Employees).
+     * library statistics, and navigation buttons to other sections (Manage Books and Manage Users).
      * @return A JPanel representing the Dashboard.
      */
     private JPanel dashboardPanel() {
         JPanel dashboard = new JPanel(new BorderLayout());
         dashboard.setBackground(Theme.PAPER);
-        dashboard.add(Theme.pageHeader("Welcome to Vertex Library", "An overview of the collection and the team."), BorderLayout.NORTH);
+        dashboard.add(Theme.pageHeader("Welcome to Vertex Library", "An overview of the collection and its users."), BorderLayout.NORTH);
 
         JPanel body = new JPanel(new BorderLayout(0, 28));
         body.setBackground(Theme.PAPER);
@@ -92,26 +92,26 @@ import static utilities.GetInfoFromDB.*;
 
         // Statistics cards
         allBooksLabel = new JLabel(String.valueOf(getTheNumberofAllBooks()));
-        allEmployeesLabel = new JLabel(String.valueOf(getTheNumberofAllEMPs()));
+        allUsersLabel = new JLabel(String.valueOf(getTheNumberofAllUsers()));
         borrowedBooksLabel = new JLabel(String.valueOf(getTheNumberofBorrowedBooks()));
 
         JPanel statsPanel = new JPanel(new GridLayout(1, 3, 20, 0));
         statsPanel.setBackground(Theme.PAPER);
         statsPanel.add(Theme.statCard("Total books", allBooksLabel, Theme.NAVY));
         statsPanel.add(Theme.statCard("Borrowed books", borrowedBooksLabel, Theme.ROYAL));
-        statsPanel.add(Theme.statCard("Employees", allEmployeesLabel, Theme.SKY));
+        statsPanel.add(Theme.statCard("Users", allUsersLabel, Theme.SKY));
         body.add(statsPanel, BorderLayout.NORTH);
 
         // Quick actions
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         buttonsPanel.setBackground(Theme.PAPER);
         JButton manageBooksButton = Theme.button("Manage books", Theme.ButtonStyle.PRIMARY);
-        JButton manageEmployeesButton = Theme.button("Manage employees", Theme.ButtonStyle.SECONDARY);
+        JButton manageUsersButton = Theme.button("Manage users", Theme.ButtonStyle.SECONDARY);
         manageBooksButton.addActionListener(e -> showPanel("Manage Books"));
-        manageEmployeesButton.addActionListener(e -> showPanel("Manage Employees"));
+        manageUsersButton.addActionListener(e -> showPanel("Manage Users"));
         buttonsPanel.add(manageBooksButton);
         buttonsPanel.add(Box.createHorizontalStrut(12));
-        buttonsPanel.add(manageEmployeesButton);
+        buttonsPanel.add(manageUsersButton);
         body.add(buttonsPanel, BorderLayout.CENTER);
 
         dashboard.add(body, BorderLayout.CENTER);
@@ -119,53 +119,53 @@ import static utilities.GetInfoFromDB.*;
     }
 
           /**
-     * Creates the Manage Employees panel, containing a table and control buttons.
-     * @return A JPanel containing the Manage Employees interface.
+     * Creates the Manage Users panel, containing a table and control buttons.
+     * @return A JPanel containing the Manage Users interface.
      */
 
         private JPanel createPeoplePanel() {
             JPanel peoplePanel = new JPanel(new BorderLayout());
             peoplePanel.setBackground(Theme.PAPER);
-            peoplePanel.add(Theme.pageHeader("Manage employees", "Add, remove and review staff accounts. Click a column header to sort."), BorderLayout.NORTH);
+            peoplePanel.add(Theme.pageHeader("Manage users", "Add, remove and review user accounts. Click a column header to sort."), BorderLayout.NORTH);
 
-            employeeTable = new JTable();
-            Theme.styleTable(employeeTable);
-            updateTable.refreshTable(employeeTable, "SELECT ID, Name, Lastname, Username, Position FROM employees");
+            userTable = new JTable();
+            Theme.styleTable(userTable);
+            updateTable.refreshTable(userTable, "SELECT ID, Name, Lastname, Username, Position FROM users");
 
             JPanel tableWrap = new JPanel(new BorderLayout());
             tableWrap.setBackground(Theme.PAPER);
             tableWrap.setBorder(BorderFactory.createEmptyBorder(24, 32, 24, 32));
-            tableWrap.add(Theme.tableScroll(employeeTable), BorderLayout.CENTER);
+            tableWrap.add(Theme.tableScroll(userTable), BorderLayout.CENTER);
             peoplePanel.add(tableWrap, BorderLayout.CENTER);
 
-            JButton addEmployeeButton = Theme.button("Add employee", Theme.ButtonStyle.PRIMARY);
-            addEmployeeButton.addActionListener(e -> {
-                addEmployee();
-                updateTable.refreshTable(employeeTable, "SELECT ID, Name, Lastname, Username, Position FROM employees");
+            JButton addUserButton = Theme.button("Add user", Theme.ButtonStyle.PRIMARY);
+            addUserButton.addActionListener(e -> {
+                addUser();
+                updateTable.refreshTable(userTable, "SELECT ID, Name, Lastname, Username, Position FROM users");
             });
 
-            JButton removeEmployeeButton = Theme.button("Remove employee", Theme.ButtonStyle.DANGER);
-            removeEmployeeButton.addActionListener(e -> {
-                RemoveFromDB.removeSelectedEmployee(employeeTable);
-                updateTable.refreshTable(employeeTable, "SELECT ID, Name, Lastname, Username, Position FROM employees");
+            JButton removeUserButton = Theme.button("Remove user", Theme.ButtonStyle.DANGER);
+            removeUserButton.addActionListener(e -> {
+                RemoveFromDB.removeSelectedUser(userTable);
+                updateTable.refreshTable(userTable, "SELECT ID, Name, Lastname, Username, Position FROM users");
             });
 
             JButton backBtn = Theme.button("Back", Theme.ButtonStyle.QUIET);
             backBtn.addActionListener(e -> showPanel("Dashboard"));
 
-            JTableHeader header = employeeTable.getTableHeader();
+            JTableHeader header = userTable.getTableHeader();
             header.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     int columnIndex = header.columnAtPoint(e.getPoint()); // Get the clicked column index
-                    sortTable(employeeTable, columnIndex); // Sort the table by the clicked column
+                    sortTable(userTable, columnIndex); // Sort the table by the clicked column
                 }
             });
 
             // Disable table editing
-            employeeTable.setDefaultEditor(Object.class, null);
+            userTable.setDefaultEditor(Object.class, null);
 
-            peoplePanel.add(Theme.actionBar(backBtn, removeEmployeeButton, addEmployeeButton), BorderLayout.SOUTH);
+            peoplePanel.add(Theme.actionBar(backBtn, removeUserButton, addUserButton), BorderLayout.SOUTH);
             return peoplePanel;
         }
 
@@ -224,8 +224,8 @@ private JPanel createLibraryPanel() {
     return libraryPanel;
 }
 
-    private void addEmployee() {
-        new RegistrationForm(employeeTable);
+    private void addUser() {
+        new RegistrationForm(userTable);
     }
 
      // Method to show the specified panel based on the name

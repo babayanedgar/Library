@@ -56,7 +56,7 @@ public class LoginForm extends JFrame {
         gbc.gridy = 0;
         formPanel.add(title, gbc);
 
-        JLabel subtitle = new JLabel("Sign in to the Vertex Library staff portal.");
+        JLabel subtitle = new JLabel("Sign in to Vertex Library.");
         subtitle.setFont(Theme.body(14));
         subtitle.setForeground(Theme.SLATE);
         gbc.gridy = 1;
@@ -113,15 +113,15 @@ public class LoginForm extends JFrame {
 
             if (validateUser(username, password)) {
                 String position =  checkPosition(username);
-                Employee employee = getUserDetails(username);
+                User user = getUserDetails(username);
 
                 switch (position) {
                     case "CEO" -> {
                         new CEOPage(username);
                         frame.dispose();
                     }
-                    case "Employee" -> {
-                        new EmployeePage(employee.getName(), employee.getLastName(), employee.getUsername());
+                    case "User" -> {
+                        new UserPage(user.getName(), user.getLastName(), user.getUsername());
                         frame.dispose();
                     }
                     default -> JOptionPane.showMessageDialog(frame, "User position not recognized.");
@@ -145,7 +145,7 @@ public class LoginForm extends JFrame {
     }
 
     public boolean validateUser(String username, String password) {
-        String query = "SELECT password FROM employees WHERE username = ?";
+        String query = "SELECT password FROM users WHERE username = ?";
 
         try (Connection conn = dbConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -160,8 +160,8 @@ public class LoginForm extends JFrame {
         }
     }
 
-    private Employee getUserDetails(String username) {
-        String query = "SELECT name, lastname, username FROM employees WHERE username = ?";
+    private User getUserDetails(String username) {
+        String query = "SELECT name, lastname, username FROM users WHERE username = ?";
 
         try (Connection connection = dbConnection.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -170,7 +170,7 @@ public class LoginForm extends JFrame {
 
             try (ResultSet resultSet = stmt.executeQuery()) {
                 if (resultSet.next()) {
-                    return new Employee(
+                    return new User(
                             resultSet.getString("name"),
                             resultSet.getString("lastname"),
                             resultSet.getString("username")

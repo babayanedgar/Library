@@ -19,11 +19,11 @@ public class RegistrationForm {
     private final JButton RegisterButton;
     private final ButtonGroup genderGroup;
     private final JCheckBox showPasswordCheckbox;
-    private final JTable employeeTable; // Reference to table model
+    private final JTable userTable; // Reference to table model
 
     // Constructor
     public RegistrationForm(JTable tableModel) {
-        this.employeeTable = tableModel; // Initialize the table model reference
+        this.userTable = tableModel; // Initialize the table model reference
 
         frame.setTitle("Vertex Library - Create Account");
         // Closing this form should only close the form, not the whole app
@@ -32,7 +32,7 @@ public class RegistrationForm {
         frame.setLocationRelativeTo(null);
         frame.setLayout(new BorderLayout());
         Theme.applyIcon(frame);
-        frame.add(Theme.pageHeader("Create account", "Add a new staff member to Vertex Library."), BorderLayout.NORTH);
+        frame.add(Theme.pageHeader("Create account", "Add a new user to Vertex Library."), BorderLayout.NORTH);
 
         JPanel mainPanel = new JPanel(new GridBagLayout());
         mainPanel.setBackground(Theme.PAPER);
@@ -169,7 +169,7 @@ public class RegistrationForm {
         mainPanel.add(positionLabel, gbc);
 
         // Position ComboBox
-        cmbPosition = new JComboBox<>(new String[]{"CEO", "Employee"});
+        cmbPosition = new JComboBox<>(new String[]{"CEO", "User"});
         cmbPosition.setFont(Theme.body(14));
         cmbPosition.setBackground(Theme.WHITE);
         gbc.gridx = 1;
@@ -215,7 +215,7 @@ public class RegistrationForm {
     }
 
     private void handleRegistration(ActionEvent e){
-        Employee emp = new Employee();
+        User user = new User();
 
         String name = nameField.getText();
         String lastName = lastNameField.getText();
@@ -242,16 +242,16 @@ public class RegistrationForm {
             return;
         }
 
-        // Set employee data
-        emp.setName(name);
-        emp.setLastName(lastName);
-        emp.setUsername(username);
-        emp.setPosition(position);
-        emp.setGender(gender);
+        // Set user data
+        user.setName(name);
+        user.setLastName(lastName);
+        user.setUsername(username);
+        user.setPosition(position);
+        user.setGender(gender);
 
         if (isValidPassword(password)) {
             password = HashPass.hashPassword(password);
-            emp.setPassword(password);
+            user.setPassword(password);
         } else {
             JOptionPane.showMessageDialog(
                     null,
@@ -263,7 +263,7 @@ public class RegistrationForm {
         }
 
         if (isValidEmail(email)) {
-            emp.setEmail(email);
+            user.setEmail(email);
         } else {
             JOptionPane.showMessageDialog(null, "Invalid email address!");
             return;
@@ -275,9 +275,9 @@ public class RegistrationForm {
             return;
         }
 
-        InsertIntoDB.InsertIntoDB(emp);
+        InsertIntoDB.InsertIntoDB(user);
 
-        updateTable.refreshTable(employeeTable, "SELECT Name, Lastname, Username, Position FROM employees");
+        updateTable.refreshTable(userTable, "SELECT Name, Lastname, Username, Position FROM users");
         int result = JOptionPane.showConfirmDialog(null, "Registration successful!", "Success", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
                 Theme.successIcon());
         if (result == JOptionPane.OK_OPTION || result == JOptionPane.CLOSED_OPTION) {

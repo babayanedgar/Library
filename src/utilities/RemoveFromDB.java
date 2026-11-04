@@ -8,46 +8,46 @@ public class RemoveFromDB {
     public RemoveFromDB() {
         // Empty constructor
     }
-  // Method to remove the selected employee from the table and the database
-public static void removeSelectedEmployee(JTable table) {
+  // Method to remove the selected user from the table and the database
+public static void removeSelectedUser(JTable table) {
     int selectedRow = table.getSelectedRow();
     
     if (selectedRow != -1) {
-        Object employeeIdObject = table.getValueAt(selectedRow, 0);
-        int employeeId;
+        Object userIdObject = table.getValueAt(selectedRow, 0);
+        int userId;
 
         try {
-            // Convert the employee ID to an integer
-            if (employeeIdObject instanceof Integer) {
-                employeeId = (Integer) employeeIdObject;
+            // Convert the user ID to an integer
+            if (userIdObject instanceof Integer) {
+                userId = (Integer) userIdObject;
             } else {
-                employeeId = Integer.parseInt(employeeIdObject.toString());
+                userId = Integer.parseInt(userIdObject.toString());
             }
 
             // Database removal logic
-            String deleteEmployeeQuery = "DELETE FROM employees WHERE id = ?";
+            String deleteUserQuery = "DELETE FROM users WHERE id = ?";
             try (Connection conn = dbConnection.getConnection();
-                 PreparedStatement pstmt = conn.prepareStatement(deleteEmployeeQuery)) {
+                 PreparedStatement pstmt = conn.prepareStatement(deleteUserQuery)) {
 
-                pstmt.setInt(1, employeeId);
+                pstmt.setInt(1, userId);
                 int rowsAffected = pstmt.executeUpdate();
 
                 if (rowsAffected > 0) {
-                    JOptionPane.showMessageDialog(null, "Employee removed successfully.");
+                    JOptionPane.showMessageDialog(null, "User removed successfully.");
                     // Optionally remove the row from the table for immediate UI feedback
                     ((DefaultTableModel) table.getModel()).removeRow(selectedRow);
                 } else {
-                    JOptionPane.showMessageDialog(null, "No employee found with ID: " + employeeId);
+                    JOptionPane.showMessageDialog(null, "No user found with ID: " + userId);
                 }
             } catch (SQLException e) {
-                JOptionPane.showMessageDialog(null, "Error removing employee: " + e.getMessage());
+                JOptionPane.showMessageDialog(null, "Error removing user: " + e.getMessage());
                 e.printStackTrace();
             }
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Invalid employee ID format.");
+            JOptionPane.showMessageDialog(null, "Invalid user ID format.");
         }
     } else {
-        JOptionPane.showMessageDialog(null, "Please select an employee to remove.");
+        JOptionPane.showMessageDialog(null, "Please select a user to remove.");
     }
 }
 

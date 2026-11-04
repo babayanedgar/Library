@@ -54,7 +54,7 @@ public class GetInfoFromDB {
 
 
     public static boolean isUsernameTaken(String username) {
-        String query = "SELECT COUNT(*) FROM employees WHERE username = ?";
+        String query = "SELECT COUNT(*) FROM users WHERE username = ?";
         try (Connection conn = dbConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
 
@@ -78,8 +78,8 @@ public class GetInfoFromDB {
         String query = "SELECT t.transactionID, b.BookName, t.borrow_date, t.return_date " +
                 "FROM dbo.transactions t " +
                 "INNER JOIN dbo.books b ON t.bookID = b.ID " +
-                "INNER JOIN dbo.employees e ON t.userID = e.ID " +
-                "WHERE e.Username = ?";
+                "INNER JOIN dbo.users u ON t.userID = u.ID " +
+                "WHERE u.Username = ?";
 
         try (ResultSet rs = executeSelectQuery(query, username)) {
             while (rs.next()) {
@@ -106,8 +106,8 @@ public class GetInfoFromDB {
         String query = "SELECT t.transactionID, b.BookName, t.borrow_date, t.return_date " +
                 "FROM dbo.transactions t " +
                 "INNER JOIN dbo.books b ON t.bookID = b.ID " +
-                "INNER JOIN dbo.employees e ON t.userID = e.ID " +
-                "WHERE e.Username = ? AND t.isDue = 1";
+                "INNER JOIN dbo.users u ON t.userID = u.ID " +
+                "WHERE u.Username = ? AND t.isDue = 1";
 
         try (ResultSet rs = executeSelectQuery(query, username)) {
             while (rs.next()) {
@@ -139,8 +139,8 @@ public class GetInfoFromDB {
             // Step 2: Write the SQL query
             String query = "SELECT COUNT(*) AS borrowedCount " +
                     "FROM transactions t " +
-                    "INNER JOIN employees e ON t.userID = e.ID " +
-                    "WHERE e.Username = ? AND t.isReturned = 0";
+                    "INNER JOIN users u ON t.userID = u.ID " +
+                    "WHERE u.Username = ? AND t.isReturned = 0";
 
             // Step 3: Prepare and execute the statement
             pstmt = connection.prepareStatement(query);
@@ -180,8 +180,8 @@ public class GetInfoFromDB {
             // Step 2: Write the SQL query
             String query = "SELECT COUNT(*) AS borrowedCount " +
                     "FROM transactions t " +
-                    "INNER JOIN employees e ON t.userID = e.ID " +
-                    "WHERE e.Username = ? AND t.isDue = 1";
+                    "INNER JOIN users u ON t.userID = u.ID " +
+                    "WHERE u.Username = ? AND t.isDue = 1";
 
             // Step 3: Prepare and execute the statement
             preparedStatement = connection.prepareStatement(query);
@@ -217,8 +217,8 @@ public class GetInfoFromDB {
         // Query to get the return date for the user's books
         String returnDateQuery = "SELECT t.transactionID, t.return_date " +
                 "FROM dbo.Transactions t " +
-                "INNER JOIN dbo.employees e ON t.userID = e.ID " +
-                "WHERE e.Username = ? AND t.isReturned = 0";
+                "INNER JOIN dbo.users u ON t.userID = u.ID " +
+                "WHERE u.Username = ? AND t.isReturned = 0";
 
         // Query to update the isDue flag for overdue books
         String updateDueQuery = "UPDATE dbo.Transactions SET isDue = 1 WHERE transactionID = ?";
@@ -263,7 +263,7 @@ public class GetInfoFromDB {
 
     public static String checkPosition(String username) {
 
-        String query = "SELECT position FROM employees WHERE username = ?";
+        String query = "SELECT position FROM users WHERE username = ?";
 
         try (Connection conn = dbConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -272,7 +272,7 @@ public class GetInfoFromDB {
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                return rs.getString("position"); // Return position if found (e.g., "CEO" or "Employee")
+                return rs.getString("position"); // Return position if found (e.g., "CEO" or "User")
             }
 
         } catch (SQLException e) {
@@ -311,7 +311,7 @@ public class GetInfoFromDB {
      * @throws SQLException if an error occurs during database interaction.
      */
     public static String getuserName(int ID) throws SQLException {
-        final String sql = "SELECT name FROM employees WHERE id = ?";
+        final String sql = "SELECT name FROM users WHERE id = ?";
         String username = null;
         try (Connection conn = dbConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -369,10 +369,10 @@ public class GetInfoFromDB {
 
     }
 
-    public static int getTheNumberofAllEMPs(){
+    public static int getTheNumberofAllUsers(){
         int number = 0;
 
-        String sql = "Select COUNT(*) from dbo.employees";
+        String sql = "Select COUNT(*) from dbo.users";
 
         try (
                 Connection conn = dbConnection.getConnection();
